@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
-#include "Engine/Classes/Engine/EngineTypes.h";
+#include "DrawDebugHelpers.h"
 #include "RieglLMSQ780.generated.h"
 
 
@@ -38,8 +38,8 @@ public:
 	int PhiMaxDegrees = 30; // [deg]
 	float MinX = 0.0f;
 	float MaxX = 100.0f;
-	float MinZ = 0.0f;
-	float MaxZ = 100.f;
+	float MinY = 0.0f;
+	float MaxY = 100.f;
 
 private:
 
