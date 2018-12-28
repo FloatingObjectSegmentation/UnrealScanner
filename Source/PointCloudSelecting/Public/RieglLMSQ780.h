@@ -37,25 +37,23 @@ public:
 
 	// external components
 	UPointCloudRenderingComponent* PCRenderer;
-	int RerenderInterval = 50;
+	int RerenderInterval = 5;
 	int RerenderCounter = 0;
 
 
 	// hyperparameters
-	float Delta = 5.0f; // [m]
+	int StepsPerFrame = 1000;
 	FVector StartingPoint;
 	float SpeedX = 90.0f; // [m/s]
 	int SpeedAngular = 27; // [lines/s]
 	int Frequency = 400000; // [Hz]
 	int PhiMaxDegrees = 30; // [deg]
-	float MinX = 0.0f;
-	float MaxX = 100.0f;
-	float MinY = 0.0f;
-	float MaxY = 100.f;
+	float MaxDistanceTraveled = 50.0f; // [m]
 
 private:
 
 	// parameters
+	float CurrentDistanceTraveled = 0.0f; // [m]
 	float PhiMaxRadians;
 	float Alpha;
 	FMatrix RotationMatrix;

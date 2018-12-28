@@ -32,11 +32,6 @@ void URieglLMSQ780::BeginPlay()
 	CurrentPoint = StartingPoint;
 	dPoint = SpeedX / (float)Frequency;
 
-	MaxX += StartingPoint.X;
-	MinX += StartingPoint.X;
-	MinY += StartingPoint.Y;
-	MaxY += StartingPoint.Y;
-
 	// Get the PointCloudRenderingComponent
 	PCRenderer = GetPointCloudRenderingComponent();
 }
@@ -47,27 +42,25 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	FVector RayCastStart, RayCastEnd;
-	for (int i = 0; i < 1000; i++) {
-		// stopping condition
-		if (CurrentPoint.Y > MaxY)
-			return;
+	for (int i = 0; i < StepsPerFrame; i++) {
+
+		CurrentDistanceTraveled += dPoint;
+		if (CurrentDistanceTraveled > MaxDistanceTraveled) {
+			UE_LOG(LogTemp, Warning, TEXT("AUGMENTATION COMPLETED"));
+			GetOwner()->Destroy();
+		}
 
 		// update algorithm parameters
 		CurrentPoint += FVector(dPoint, 0, 0);
 		Direction = RotationMatrix.TransformVector(Direction);
 
+		// update rotation direction if max reached
 		double thresh = PhiMaxRadians;
 		double distance = acos(Dot3(Down, Direction));
-
 		UE_LOG(LogTemp, Warning, TEXT("%f"), sqrt(pow(Direction.X, 2) + pow(Direction.Y, 2) + pow(Direction.Z, 2)));
 		if (distance > thresh) {
 			Alpha = -Alpha;
 			RecalcRotationMatrix();
-		}
-
-		if (CurrentPoint.X > MaxX || CurrentPoint.X < MinX) {
-			CurrentPoint += FVector(0, Delta, 0);
-			dPoint = -dPoint;
 		}
 
 		// define raycast parameters
@@ -78,6 +71,7 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		TArray<FHitResult> Hits;
 		GetWorld()->LineTraceMultiByChannel(Hits, RayCastStart, RayCastEnd, Channel);
 
+		// save the intensity and location
 		for (int32 i = 0; i < Hits.Num(); i++) {
 
 			FVector SurfaceNormal = Hits[i].ImpactNormal;
