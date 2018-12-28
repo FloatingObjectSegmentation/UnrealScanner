@@ -52,6 +52,9 @@ public: // API
 	UFUNCTION(BlueprintCallable)
 	FString ProcessSelectedPoints(FVector& CenterInWorldSpace, FVector& BoundingBox);
 
+	UFUNCTION(BlueprintCallable)
+	void SetNewPointCloud(TArray<FPointCloudPoint>& pts);
+
 protected: // auxiliary
 	void SpaceTransformPCToLocal(TArray<FPointCloudPoint> &LoadedPoints);
 	UPointCloud * PrepareRenderingSettings(TArray<FPointCloudPoint> &Points, FString pointCloudName, FString settingsName);

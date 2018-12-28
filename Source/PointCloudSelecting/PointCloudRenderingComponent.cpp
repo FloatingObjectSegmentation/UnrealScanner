@@ -22,7 +22,7 @@ void UPointCloudRenderingComponent::BeginPlay()
 	SpawnPointCloudHostActor(FTransform(FVector(0.0f)));
 	PointCloudHostActor->SetPointCloud(PointCloud);
 
-	UE_LOG(LogTemp, Warning, TEXT("Point loaded %s"), *LoadedPoints[0].Color.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Point loaded %s"), *LoadedPoints[0].Color.ToString());
 }
 
 void UPointCloudRenderingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -41,7 +41,16 @@ FString UPointCloudRenderingComponent::ProcessSelectedPoints(FVector& CenterInWo
 	FString PointCloudTxt = SelectedPointsToPointCloudTxtFormatString(SelectedPoints);
 	MarkSubsetWithinLoadedPoints(QueryResultIndices);
 	RerenderPointCloud();
+
 	return PointCloudTxt;
+}
+void UPointCloudRenderingComponent::SetNewPointCloud(TArray<FPointCloudPoint>& pts)
+{
+	PointCloudHostActor->Destroy();
+	PointCloudHostActor = nullptr;
+	UPointCloud* tmpPointCloud = PrepareRenderingSettings(pts, "PointCloud2", "Settings2");
+	SpawnPointCloudHostActor(FTransform(FVector(0.0f)));
+	PointCloudHostActor->SetPointCloud(tmpPointCloud);
 }
 #pragma endregion
 

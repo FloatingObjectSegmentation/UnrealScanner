@@ -7,6 +7,10 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "../PointCloudRenderingComponent.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Engine/StaticMeshActor.h"
+#include "PointCloud.h"
 #include "RieglLMSQ780.generated.h"
 
 
@@ -28,6 +32,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	// external components
+	UPointCloudRenderingComponent* PCRenderer;
+	int RerenderInterval = 50;
+	int RerenderCounter = 0;
+
 
 	// hyperparameters
 	float Delta = 5.0f; // [m]
@@ -55,4 +65,7 @@ private:
 	// storage
 	TArray<FVector> Points;
 	TArray<float> Intensities;
+
+	UPointCloudRenderingComponent* GetPointCloudRenderingComponent();
+	void RerenderPointCloud();
 };
