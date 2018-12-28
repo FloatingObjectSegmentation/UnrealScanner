@@ -42,11 +42,11 @@ public:
 
 
 	// hyperparameters
-	int StepsPerFrame = 1000;
+	int StepsPerFrame = 100;
 	FVector StartingPoint;
 	float SpeedX = 90.0f; // [m/s]
 	int SpeedAngular = 27; // [lines/s]
-	int Frequency = 400000; // [Hz]
+	int Frequency = 40000; // [Hz]
 	int PhiMaxDegrees = 30; // [deg]
 	float MaxDistanceTraveled = 50.0f; // [m]
 
@@ -57,9 +57,11 @@ private:
 	float PhiMaxRadians;
 	float Alpha;
 	FMatrix RotationMatrix;
+	FMatrix FrameMatrix;
 	float dPoint;
 	FVector Down;
 	FVector Direction;
+	FVector DirectionIntermediate;
 	FVector CurrentPoint;
 
 	// storage

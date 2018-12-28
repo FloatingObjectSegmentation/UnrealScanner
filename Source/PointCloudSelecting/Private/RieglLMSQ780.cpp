@@ -24,8 +24,9 @@ void URieglLMSQ780::BeginPlay()
 	Alpha = PhiMaxRadians * 2 * SpeedAngular / (float)Frequency;
 	Down = FVector(0, 0, -1);
 	Direction = FVector(0, 0, -1);
-	RecalcRotationMatrix();
+	DirectionIntermediate = Direction;
 
+	RecalcRotationMatrix();
 
 	// init plane velocity parameters
 	StartingPoint = GetOwner()->GetActorLocation();
@@ -44,6 +45,7 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	FVector RayCastStart, RayCastEnd;
 	for (int i = 0; i < StepsPerFrame; i++) {
 
+		// break if enough distance traveled
 		CurrentDistanceTraveled += dPoint;
 		if (CurrentDistanceTraveled > MaxDistanceTraveled) {
 			UE_LOG(LogTemp, Warning, TEXT("AUGMENTATION COMPLETED"));
@@ -51,17 +53,19 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		}
 
 		// update algorithm parameters
-		CurrentPoint += FVector(dPoint, 0, 0);
-		Direction = RotationMatrix.TransformVector(Direction);
+		CurrentPoint += FrameMatrix.TransformVector(FVector(dPoint, 0, 0));
+		DirectionIntermediate = RotationMatrix.TransformVector(DirectionIntermediate);
 
 		// update rotation direction if max reached
 		double thresh = PhiMaxRadians;
-		double distance = acos(Dot3(Down, Direction));
+		double distance = acos(Dot3(Down, DirectionIntermediate));
 		UE_LOG(LogTemp, Warning, TEXT("%f"), sqrt(pow(Direction.X, 2) + pow(Direction.Y, 2) + pow(Direction.Z, 2)));
 		if (distance > thresh) {
 			Alpha = -Alpha;
 			RecalcRotationMatrix();
 		}
+
+		Direction = FrameMatrix.TransformVector(DirectionIntermediate);
 
 		// define raycast parameters
 		RayCastStart = CurrentPoint;
@@ -104,6 +108,13 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 #pragma region [auxiliary]
 void URieglLMSQ780::RecalcRotationMatrix()
 {
+	float yaw = -GetOwner()->GetActorRotation().Yaw * PI / 180.0;
+
+	FrameMatrix = FMatrix(FPlane(cos(yaw), -sin(yaw), 0, 0),
+							      FPlane(sin(yaw), cos(yaw), 0, 0),
+								  FPlane(0, 0, 1, 0),
+								  FPlane(0, 0, 0, 1));
+
 	RotationMatrix = FMatrix(FPlane(1, 0, 0, 0),
 		FPlane(0, cos(Alpha), -sin(Alpha), 0),
 		FPlane(0, sin(Alpha), cos(Alpha), 0),
