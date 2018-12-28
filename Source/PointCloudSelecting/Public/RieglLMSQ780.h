@@ -33,6 +33,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//hi
+
 	// external components
 	UPointCloudRenderingComponent* PCRenderer;
 	int RerenderInterval = 50;
