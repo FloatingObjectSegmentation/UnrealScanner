@@ -49,7 +49,7 @@ void URieglLMSQ780::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		CurrentDistanceTraveled += dPoint;
 		if (CurrentDistanceTraveled > MaxDistanceTraveled) {
 			UE_LOG(LogTemp, Warning, TEXT("AUGMENTATION COMPLETED"));
-			GetOwner()->Destroy();
+			return;
 		}
 
 		// update algorithm parameters
